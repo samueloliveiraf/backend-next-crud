@@ -5,10 +5,14 @@ import jwt from "jsonwebtoken";
 
 const prisma = new PrismaClient();
 
-const SECRET_KEY = process.env.JWT_SECRET;
-
 export async function POST(req: Request) {
   try {
+    const SECRET_KEY = process.env.JWT_SECRET;
+
+    if (!SECRET_KEY) {
+        throw new Error("JWT_SECRET não está definido no ambiente!");
+    }
+    
     const { email, password } = await req.json();
 
     const user = await prisma.user.findUnique({ where: { email } });
